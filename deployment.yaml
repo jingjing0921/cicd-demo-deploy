@@ -1,0 +1,63 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "cicd-demo"
+  name: "cicd-demo"
+  namespace: "default"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "cicd-demo"
+  template:
+    metadata:
+      labels:
+        app: "cicd-demo"
+    spec:
+      containers:
+        # "registry.cn-hangzhou.aliyuncs.com/jingjing0921/cicd-demo:v1"
+        - image: "registry.cn-hangzhou.aliyuncs.com/jingjing0921/cicd-demo:v1"
+          imagePullPolicy: "Always"
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: "/actuator/info"
+              port: 8088
+              scheme: "HTTP"
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: "cicd-demo"
+          ports:
+            - containerPort: 8088
+              name: "http"
+              protocol: "TCP"
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: "/actuator/info"
+              port: 8088
+              scheme: "HTTP"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cicd-demo
+  name: cicd-demo
+  namespace: default
+spec:
+  ports:
+  - port: 8088
+    protocol: TCP
+    targetPort: 8088
+    nodePort: 30080
+  selector:
+    app: cicd-demo
+  type: NodePort            
