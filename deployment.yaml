@@ -16,8 +16,7 @@ spec:
         app: "cicd-demo"
     spec:
       containers:
-        # "registry.cn-hangzhou.aliyuncs.com/jingjing0921/cicd-demo:v1"
-        - image: "registry.cn-hangzhou.aliyuncs.com/jingjing0921/cicd-demo:v1"
+        - image: "image"
           imagePullPolicy: "Always"
           livenessProbe:
             failureThreshold: 3
